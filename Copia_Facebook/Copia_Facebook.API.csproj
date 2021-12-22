@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\CopiaFacebook.Application\CopiaFacebook.Application.csproj" />
+    <ProjectReference Include="..\CopiaFacebook.Core\CopiaFacebook.Core.csproj" />
+    <ProjectReference Include="..\CopiaFacebook.Infrastructure\CopiaFacebook.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
