@@ -1,4 +1,5 @@
 ﻿using CopiaFacebook.Core.Entities;
+using CopiaFacebook.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,12 @@ namespace Copia_Facebook.API.Controllers
     [Route("api/posts")]
     public class PostController : ControllerBase
     {
+        private readonly CopiaFacebookDbContext _dbContext;
+        public PostController(CopiaFacebookDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         [HttpGet]
         public IActionResult Get(string query)
         {
@@ -35,9 +42,10 @@ namespace Copia_Facebook.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Post post)
+        public async Task<IActionResult> Post([FromBody] Post post)
         {
-            return NoContent();
+            await _dbContext.Posts.AddAsync(post);
+            return Ok(post);
         }
 
         [HttpPut("{id}")]

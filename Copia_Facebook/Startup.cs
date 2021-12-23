@@ -1,4 +1,6 @@
+using CopiaFacebook.Application.Commands.CreateUser;
 using CopiaFacebook.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,7 +32,11 @@ namespace Copia_Facebook
         {
             services.AddDbContext<CopiaFacebookDbContext>(opt => opt.UseInMemoryDatabase("CopiaFacebookDatabase"));
             services.AddScoped<CopiaFacebookDbContext, CopiaFacebookDbContext>();
+
             services.AddControllers();
+
+            services.AddMediatR(typeof(CreateUserCommand));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Copia_Facebook", Version = "v1" });

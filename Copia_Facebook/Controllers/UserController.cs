@@ -1,4 +1,7 @@
-﻿using CopiaFacebook.Core.Entities;
+﻿using CopiaFacebook.Application.Commands.CreateUser;
+using CopiaFacebook.Core.Entities;
+using CopiaFacebook.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +13,13 @@ namespace Copia_Facebook.API.Controllers
     [Route("api/users")]
     public class UserController : Controller
     {
+        private readonly CopiaFacebookDbContext _dbContext;
+        private readonly IMediator _mediator;
+        public UserController(CopiaFacebookDbContext dbContext, IMediator mediator)
+        {
+            _dbContext = dbContext;
+            _mediator = mediator;
+        }
 
         [HttpGet]
         public IActionResult Get(string query)
@@ -36,13 +46,19 @@ namespace Copia_Facebook.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] User user)
+        public async Task<IActionResult> Post([FromBody] CreateUserCommand command)
         {
-            return NoContent();
+            if (command.Name.Length > 50)
+            {
+                return BadRequest();
+            }
+
+            var id = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetById), new { id = id }, command);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]User user)
+        public IActionResult Put(int id, [FromBody] User user)
         {
             return NoContent();
         }
