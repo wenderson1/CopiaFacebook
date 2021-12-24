@@ -1,5 +1,10 @@
+using Copia_Facebook.API.Filters;
 using CopiaFacebook.Application.Commands.CreateUser;
+using CopiaFacebook.Application.Validators;
+using CopiaFacebook.Core.Repositories;
 using CopiaFacebook.Infrastructure.Persistence;
+using CopiaFacebook.Infrastructure.Persistence.Repositories;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,9 +36,12 @@ namespace Copia_Facebook
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CopiaFacebookDbContext>(opt => opt.UseInMemoryDatabase("CopiaFacebookDatabase"));
-            services.AddScoped<CopiaFacebookDbContext, CopiaFacebookDbContext>();
 
-            services.AddControllers();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
+
+            services.AddControllers(options=>options.Filters.Add(typeof(ValidationFilter)))
+                .AddFluentValidation(fv=>fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>());
 
             services.AddMediatR(typeof(CreateUserCommand));
 

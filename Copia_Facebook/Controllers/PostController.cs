@@ -1,5 +1,13 @@
-﻿using CopiaFacebook.Core.Entities;
+﻿using CopiaFacebook.Application.Commands.CreatePost;
+using CopiaFacebook.Application.Commands.DeletePost;
+using CopiaFacebook.Application.Commands.UpdatePost;
+using CopiaFacebook.Application.Queries.GetAllPosts;
+using CopiaFacebook.Application.Queries.GetPostById;
+using CopiaFacebook.Application.Queries.GetPostsActive;
+using CopiaFacebook.Core.Entities;
+using CopiaFacebook.Core.Repositories;
 using CopiaFacebook.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,55 +19,67 @@ namespace Copia_Facebook.API.Controllers
     [Route("api/posts")]
     public class PostController : ControllerBase
     {
-        private readonly CopiaFacebookDbContext _dbContext;
-        public PostController(CopiaFacebookDbContext dbContext)
+        private readonly IMediator _mediator;
+
+        public PostController(IMediator mediator)
         {
-            _dbContext = dbContext;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult Get(string query)
+        public async Task<IActionResult> Get(string query)
         {
-            return NoContent();
+            var getAllPostsQuery = new GetAllPostsQuery(query);
+            var posts = await _mediator.Send(getAllPostsQuery);
+
+            return Ok(posts);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            return NoContent();
-        }
+            var query = new GetPostByIdQuery(id);
+            var post = await _mediator.Send(query);
 
-        [HttpGet("getPostsActive")]
-        public IActionResult GetPostsActive(string query)
-        {
-            return NoContent();
-        }
-
-        [HttpGet("getPostsDeactive")]
-        public IActionResult GetPostsDeactive(string query)
-        {
-            return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Post post)
-        {
-            await _dbContext.Posts.AddAsync(post);
+            if (post == null)
+            {
+                return NotFound();
+            }
             return Ok(post);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put([FromBody] Post post)
+        [HttpGet("getPostsActive")]
+        public async Task<IActionResult> GetPostsActive(string query)
         {
+            var getPostsActive = new GetPostsActiveQuery(query);
+            var posts = await _mediator.Send(getPostsActive);
+
+            return Ok(posts);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] CreatePostCommand command, IMediator mediator)
+        {
+            var id = await _mediator.Send(command);
+
+            return CreatedAtAction(nameof(GetById), new { id = id }, command);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdatePostCommand command)
+        {
+            await _mediator.Send(command);
             return NoContent();
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var command = new DeletePostCommand(id);
+
+            await _mediator.Send(command);
+
             return NoContent();
         }
-        
-        
     }
 }

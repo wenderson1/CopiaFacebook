@@ -1,4 +1,9 @@
 ﻿using CopiaFacebook.Application.Commands.CreateUser;
+using CopiaFacebook.Application.Commands.DeleteUser;
+using CopiaFacebook.Application.Commands.UpdateUser;
+using CopiaFacebook.Application.Queries.GetAllUsers;
+using CopiaFacebook.Application.Queries.GetUserById;
+using CopiaFacebook.Application.Queries.GetUsersActive;
 using CopiaFacebook.Core.Entities;
 using CopiaFacebook.Infrastructure.Persistence;
 using MediatR;
@@ -13,59 +18,67 @@ namespace Copia_Facebook.API.Controllers
     [Route("api/users")]
     public class UserController : Controller
     {
-        private readonly CopiaFacebookDbContext _dbContext;
+
         private readonly IMediator _mediator;
-        public UserController(CopiaFacebookDbContext dbContext, IMediator mediator)
+        public UserController(IMediator mediator)
         {
-            _dbContext = dbContext;
+
             _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult Get(string query)
+        public async Task<IActionResult> GetAsync(string query)
         {
-            return NoContent();
+            var getAllUsersQuery = new GetAllUsersQuery(query);
+            var users = await _mediator.Send(getAllUsersQuery);
+
+            return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            return NoContent();
+            var getUserByIdQuery = new GetUserByIdQuery(id);
+            var user = await _mediator.Send(getUserByIdQuery);
+
+            if (user == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(user);
         }
 
         [HttpGet("usersActive")]
-        public IActionResult GetUsersActive(string query)
+        public async Task<IActionResult> GetUsersActive(string query)
         {
-            return NoContent();
-        }
+            var getUsersActiveQuery = new GetUsersActiveQuery(query);
+            var users = await _mediator.Send(getUsersActiveQuery);
 
-        [HttpGet("usersDeactive")]
-        public IActionResult GetUsersDeactive(string query)
-        {
-            return NoContent();
+            return Ok(users);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateUserCommand command)
         {
-            if (command.Name.Length > 50)
-            {
-                return BadRequest();
-            }
-
+          
             var id = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetById), new { id = id }, command);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] User user)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateUserCommand command)
         {
+            await _mediator.Send(command);
             return NoContent();
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var command = new DeleteUserCommand(id);
+            await _mediator.Send(command);
+
             return NoContent();
         }
     }
