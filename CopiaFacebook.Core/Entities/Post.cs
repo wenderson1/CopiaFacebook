@@ -27,5 +27,10 @@ namespace CopiaFacebook.Core.Entities
             Status = false;
         }
 
+        public void Update(string description)
+        {
+            Description = description;
+        }
+
     }
 }
