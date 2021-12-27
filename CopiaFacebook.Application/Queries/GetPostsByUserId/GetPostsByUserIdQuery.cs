@@ -11,5 +11,10 @@ namespace CopiaFacebook.Application.Queries.GetPostsByUserId
     public class GetPostsByUserIdQuery : IRequest<List<Post>>
     {
         public int IdUser { get; private set; }
+
+        public GetPostsByUserIdQuery(int idUser)
+        {
+            IdUser = idUser;
+        }
     }
 }

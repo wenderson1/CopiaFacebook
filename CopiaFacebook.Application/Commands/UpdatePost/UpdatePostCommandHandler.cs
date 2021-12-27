@@ -24,6 +24,11 @@ namespace CopiaFacebook.Application.Commands.UpdatePost
         {
             var post = await _postRepository.GetById(request.Id);
 
+            if(post == null)
+            {
+                return Unit.Value;
+            }
+
             post.Update(request.Description);
 
             await _postRepository.SaveChangesAsync();

@@ -4,6 +4,7 @@ using CopiaFacebook.Application.Commands.UpdatePost;
 using CopiaFacebook.Application.Queries.GetAllPosts;
 using CopiaFacebook.Application.Queries.GetPostById;
 using CopiaFacebook.Application.Queries.GetPostsActive;
+using CopiaFacebook.Application.Queries.GetPostsByUserId;
 using CopiaFacebook.Core.Entities;
 using CopiaFacebook.Core.Repositories;
 using CopiaFacebook.Infrastructure.Persistence;
@@ -20,10 +21,12 @@ namespace Copia_Facebook.API.Controllers
     public class PostController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IPostRepository _postRepository;
 
-        public PostController(IMediator mediator)
+        public PostController(IMediator mediator, IPostRepository postRepository)
         {
             _mediator = mediator;
+            _postRepository = postRepository;
         }
 
         [HttpGet]
@@ -57,8 +60,17 @@ namespace Copia_Facebook.API.Controllers
             return Ok(posts);
         }
 
+        [HttpGet("getPostsByUserId/{userId}")]
+        public async Task<IActionResult> GetPostsByUserId(int userId)
+        {
+            var getPostsByUserId = new GetPostsByUserIdQuery(userId);
+            var posts = await _mediator.Send(getPostsByUserId);
+
+            return Ok(posts);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreatePostCommand command, IMediator mediator)
+        public async Task<IActionResult> Post([FromBody] CreatePostCommand command)
         {
             var id = await _mediator.Send(command);
 
@@ -66,9 +78,22 @@ namespace Copia_Facebook.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdatePostCommand command)
+        public async Task<IActionResult> Put(int id,[FromBody] UpdatePostCommand command)
         {
+            var post = await _postRepository.GetById(id);
+
+            if(id != command.Id)
+            {
+                return BadRequest("Id do Body é diferente do Id da Header");
+            }
+
+            if(post == null || post.Status == false)
+            {
+                return BadRequest("Post não existe ou está desativado");
+            }
+            
             await _mediator.Send(command);
+            
             return NoContent();
         }
 
@@ -76,6 +101,12 @@ namespace Copia_Facebook.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var command = new DeletePostCommand(id);
+            var post = await _postRepository.GetById(id);
+
+            if (post == null || post.Status == false)
+            {
+                return BadRequest("Post não existe ou está desativado");
+            }
 
             await _mediator.Send(command);
 

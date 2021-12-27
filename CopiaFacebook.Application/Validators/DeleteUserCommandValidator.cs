@@ -16,6 +16,7 @@ namespace CopiaFacebook.Application.Validators
             RuleFor(u => u.Id)
                 .GreaterThan(0)
                 .WithMessage("Id do usuário precisa ser maior que 0");
+
         }
     }
 }

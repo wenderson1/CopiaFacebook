@@ -40,8 +40,9 @@ namespace Copia_Facebook
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
 
-            services.AddControllers(options=>options.Filters.Add(typeof(ValidationFilter)))
-                .AddFluentValidation(fv=>fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>());
+
+            services.AddControllers(options => options.Filters.Add(typeof(ValidationFilter)))
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserCommandValidator>());
 
             services.AddMediatR(typeof(CreateUserCommand));
 

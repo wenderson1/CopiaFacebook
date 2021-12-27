@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 
 namespace CopiaFacebook.Core.Entities
 {
-    public class Post:BaseEntity
+    public class Post
     {
-        public Post(string description, int idUser)
+        public Post(string description, int userId)
         {
             Description = description;
             Status = true;
             CreatedAt = DateTime.Now;
-            IdUser = idUser;
+            UserId = userId;
         }
 
+        public int Id { get; private set; }
         public string Description { get; private set; }
         public bool Status { get; private set; }
         public DateTime CreatedAt { get; private set; }
-        public int  IdUser { get; private set; }
-        public User Client { get; private set; }
+        public int UserId { get; private set; }
+        public User User { get; private set; }
 
         public void DeactivePost()
         {

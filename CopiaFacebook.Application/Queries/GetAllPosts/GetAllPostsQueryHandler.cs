@@ -27,7 +27,7 @@ namespace CopiaFacebook.Application.Queries.GetAllPosts
             var posts = await _postRepository.GetAll();
 
             var postsViewModel = posts
-                .Select(p => new PostViewModel(p.Description, p.CreatedAt, p.Status, p.IdUser))
+                .Select(p => new PostViewModel(p.Description, p.CreatedAt, p.Status, p.UserId))
                 .ToList();
 
             return postsViewModel;

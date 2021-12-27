@@ -14,12 +14,7 @@ namespace CopiaFacebook.Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Post> builder)
         {
             builder.HasKey(p => p.Id);
-
-            builder
-                .HasOne(p => p.Client)
-                .WithMany(u => u.OwnedPost)
-                .HasForeignKey(p => p.IdUser)
-                .OnDelete(DeleteBehavior.Restrict);
+          
         }
     }
 }

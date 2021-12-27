@@ -17,12 +17,11 @@ namespace CopiaFacebook.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<int> Create(Post post)
+        public async Task Create(Post post)
         {
             await _dbContext.Posts.AddAsync(post);
             await _dbContext.SaveChangesAsync();
 
-            return post.Id;
         }
 
         public async Task<List<Post>> GetAll()
@@ -37,7 +36,7 @@ namespace CopiaFacebook.Infrastructure.Persistence.Repositories
 
         public async Task<List<Post>> GetPostByUserId(int idUser)
         {
-            return await _dbContext.Posts.Where(p => p.IdUser == idUser).ToListAsync();
+            return await _dbContext.Posts.Where(p => p.UserId == idUser).ToListAsync();
         }
 
         public async Task<List<Post>> GetPostsActive()

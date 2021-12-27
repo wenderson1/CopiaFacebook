@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace CopiaFacebook.Application.Commands.UpdateUser
 {
-    public class UpdateUserCommand:IRequest<Unit>
+    public class UpdateUserCommand : IRequest<Unit>
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
+

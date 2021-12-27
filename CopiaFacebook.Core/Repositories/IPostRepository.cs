@@ -13,7 +13,7 @@ namespace CopiaFacebook.Core.Repositories
         Task<Post> GetById(int id);
         Task<List<Post>> GetPostsActive();
         Task<List<Post>> GetPostByUserId(int idUser);
-        Task<int> Create(Post post);
+        Task Create(Post post);
         Task SaveChangesAsync();
     }
 }

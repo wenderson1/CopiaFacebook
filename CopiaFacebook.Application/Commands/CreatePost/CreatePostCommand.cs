@@ -9,8 +9,8 @@ namespace CopiaFacebook.Application.Commands.CreatePost
 {
     public class CreatePostCommand:IRequest<int>
     {
-        public string Description { get; private set; }
-        public int IdUser { get; private set; }
+        public string Description { get;  set; }
+        public int IdUser { get;  set; }
 
         public CreatePostCommand(string description, int idUser)
         {

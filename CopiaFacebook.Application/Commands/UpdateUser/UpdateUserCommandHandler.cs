@@ -22,6 +22,11 @@ namespace CopiaFacebook.Application.Commands.UpdateUser
         {
             var user = await _userRepository.GetById(request.Id);
 
+            if (user == null)
+            {
+                return Unit.Value;
+            }
+
             user.Update(request.Name);
 
             await _userRepository.SaveChangesAsync();

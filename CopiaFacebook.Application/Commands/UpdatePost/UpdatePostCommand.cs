@@ -9,7 +9,8 @@ namespace CopiaFacebook.Application.Commands.UpdatePost
 {
     public class UpdatePostCommand:IRequest<Unit>
     {
-        public int Id { get; private set; }
-        public string Description { get; private set; }
+        public int Id { get;  set; }
+        public string Description { get; set ; }
+
     }
 }

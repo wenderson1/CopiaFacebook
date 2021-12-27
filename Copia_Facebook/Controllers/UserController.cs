@@ -5,7 +5,9 @@ using CopiaFacebook.Application.Queries.GetAllUsers;
 using CopiaFacebook.Application.Queries.GetUserById;
 using CopiaFacebook.Application.Queries.GetUsersActive;
 using CopiaFacebook.Core.Entities;
+using CopiaFacebook.Core.Repositories;
 using CopiaFacebook.Infrastructure.Persistence;
+using CopiaFacebook.Infrastructure.Persistence.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,10 +22,11 @@ namespace Copia_Facebook.API.Controllers
     {
 
         private readonly IMediator _mediator;
-        public UserController(IMediator mediator)
+        private readonly IUserRepository _userRepository;
+        public UserController(IMediator mediator, IUserRepository userRepository)
         {
-
             _mediator = mediator;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -69,6 +72,19 @@ namespace Copia_Facebook.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateUserCommand command)
         {
+
+            var user = await _userRepository.GetById(id);
+
+            if (id != command.Id)
+            {
+                return BadRequest("Id do Body é diferente do Id da Header");
+            }
+
+            if (user == null || user.Active == false)
+            {
+                return BadRequest("User não existe ou está desativado");
+            }
+
             await _mediator.Send(command);
             return NoContent();
         }
@@ -76,6 +92,13 @@ namespace Copia_Facebook.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
+            var user = await _userRepository.GetById(id);
+
+            if (user == null || user.Active == false)
+            {
+                return BadRequest("Post não existe ou está desativado");
+            }
+
             var command = new DeleteUserCommand(id);
             await _mediator.Send(command);
 
