@@ -1,4 +1,5 @@
-﻿using CopiaFacebook.Core.Entities;
+﻿using CopiaFacebook.Application.ViewModels;
+using CopiaFacebook.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CopiaFacebook.Application.Queries.GetUsersActive
 {
-    public class GetUsersActiveQuery : IRequest<List<User>>
+    public class GetUsersActiveQuery : IRequest<List<UserViewModel>>
     {
         public string Query { get; private set; }
 

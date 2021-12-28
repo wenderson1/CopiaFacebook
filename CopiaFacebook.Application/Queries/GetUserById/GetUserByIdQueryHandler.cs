@@ -1,4 +1,5 @@
-﻿using CopiaFacebook.Core.Entities;
+﻿using CopiaFacebook.Application.ViewModels;
+using CopiaFacebook.Core.Entities;
 using CopiaFacebook.Core.Repositories;
 using CopiaFacebook.Infrastructure.Persistence;
 using MediatR;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CopiaFacebook.Application.Queries.GetUserById
 {
-    public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, User>
+    public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserViewModel>
     {
         private readonly IUserRepository _userRepository;
 
@@ -21,9 +22,13 @@ namespace CopiaFacebook.Application.Queries.GetUserById
             _userRepository = userRepository;
         }
 
-        public async Task<User> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+        public async Task<UserViewModel> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _userRepository.GetById(request.Id);
+            var user =  await _userRepository.GetById(request.Id);
+
+            var userViewModel = new UserViewModel(user.Name, user.CreatedAt, user.Active);
+
+            return userViewModel;
         }
     }
 }

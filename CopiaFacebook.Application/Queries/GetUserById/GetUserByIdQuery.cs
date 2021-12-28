@@ -1,4 +1,5 @@
-﻿using CopiaFacebook.Core.Entities;
+﻿using CopiaFacebook.Application.ViewModels;
+using CopiaFacebook.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CopiaFacebook.Application.Queries.GetUserById
 {
-   public class GetUserByIdQuery:IRequest<User>
+   public class GetUserByIdQuery:IRequest<UserViewModel>
     {
         public GetUserByIdQuery(int id)
         {
