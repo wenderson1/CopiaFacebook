@@ -96,7 +96,7 @@ namespace Copia_Facebook.API.Controllers
 
             if (user == null || user.Active == false)
             {
-                return BadRequest("Post não existe ou está desativado");
+                return BadRequest("User não existe ou está desativado");
             }
 
             var command = new DeleteUserCommand(id);
